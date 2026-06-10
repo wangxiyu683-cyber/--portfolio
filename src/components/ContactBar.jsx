@@ -12,6 +12,8 @@ function CopyItem({ icon, display, copyValue }) {
     <button
       onClick={handle}
       className="group flex items-center gap-2.5 transition-colors duration-200"
+      style={{ position: 'relative' }}
+      title="点击复制"
     >
       <span style={{ color: 'rgba(88,89,173,0.6)' }}>{icon}</span>
       <span
@@ -20,6 +22,23 @@ function CopyItem({ icon, display, copyValue }) {
       >
         {copied ? '已复制 ✓' : display}
       </span>
+      {copied && (
+        <span style={{
+          position: 'absolute',
+          top: '-28px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          background: '#5859AD',
+          color: '#fff',
+          fontSize: 11,
+          padding: '2px 8px',
+          borderRadius: 999,
+          whiteSpace: 'nowrap',
+          pointerEvents: 'none',
+        }}>
+          已复制 ✓
+        </span>
+      )}
     </button>
   )
 }
@@ -27,6 +46,7 @@ function CopyItem({ icon, display, copyValue }) {
 export default function ContactBar() {
   return (
     <footer
+      id="contact-section"
       className="px-6 md:px-16 lg:px-24 py-10"
       style={{ borderTop: '1px solid rgba(27,34,51,0.07)' }}
     >
@@ -45,34 +65,31 @@ export default function ContactBar() {
         {/* Contacts */}
         <div className="flex flex-wrap items-center gap-7">
           <CopyItem
-            display="173 0220 8652"
-            copyValue="17302208652"
-            icon={
-              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-                <path d="M2 2h3l1.5 3.5-1.75 1.05a7.5 7.5 0 003.7 3.7L10 8.5 12 10v3a1 1 0 01-1 1A10 10 0 011 3a1 1 0 011-1z" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            }
-          />
-          <a
-            href="mailto:wangxiyu683@gmail.com"
-            className="flex items-center gap-2.5 transition-colors duration-200"
-            style={{ color: 'rgba(27,34,51,0.40)' }}
-            onMouseEnter={e => e.currentTarget.style.color = '#5859AD'}
-            onMouseLeave={e => e.currentTarget.style.color = 'rgba(27,34,51,0.40)'}
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ color: 'rgba(88,89,173,0.6)' }}>
-              <rect x="1" y="3" width="12" height="8" rx="1.5" stroke="currentColor" strokeWidth="1.2" />
-              <path d="M1 4.5l6 4 6-4" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
-            </svg>
-            <span className="text-xs tracking-wide">wangxiyu683@gmail.com</span>
-          </a>
-          <CopyItem
-            display="WeChat"
-            copyValue="你的微信号"
+            display="z18231799626"
+            copyValue="z18231799626"
             icon={
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
                 <path d="M5.5 7.5C5.5 5.015 7.515 3 10 3c2.485 0 4.5 2.015 4.5 4.5 0 .86-.242 1.664-.663 2.347l.163 1.653-1.5-.75A4.46 4.46 0 0110 11c-2.485 0-4.5-2.015-4.5-4.5z" stroke="currentColor" strokeWidth="1.2" />
                 <path d="M4.5 9.5A4.46 4.46 0 012 10l-1.5.75.163-1.653A4.46 4.46 0 01.5 6.5C.5 4.015 2.515 2 5 2c.5 0 .98.08 1.43.23" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            }
+          />
+          <CopyItem
+            display="791372282@qq.com"
+            copyValue="791372282@qq.com"
+            icon={
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <rect x="1" y="3" width="12" height="8" rx="1.5" stroke="rgba(88,89,173,0.6)" strokeWidth="1.2" />
+                <path d="M1 4.5l6 4 6-4" stroke="rgba(88,89,173,0.6)" strokeWidth="1.2" strokeLinecap="round" />
+              </svg>
+            }
+          />
+          <CopyItem
+            display="173 0220 8652"
+            copyValue="17302208652"
+            icon={
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path d="M2 2h3l1.5 3.5-1.75 1.05a7.5 7.5 0 003.7 3.7L10 8.5 12 10v3a1 1 0 01-1 1A10 10 0 011 3a1 1 0 011-1z" stroke="rgba(88,89,173,0.6)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
               </svg>
             }
           />

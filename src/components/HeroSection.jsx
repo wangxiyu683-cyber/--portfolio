@@ -289,19 +289,23 @@ export default function HeroSection() {
                 </svg>
               </button>
 
-              {/* Ghost link — reactive hover */}
-              <a
-                href="mailto:wangxiyu683@gmail.com"
+              {/* Ghost link — scroll to contact */}
+              <button
+                onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
                 className="text-sm font-medium tracking-wide"
                 style={{
                   color: linkHovered ? '#5859AD' : 'rgba(27,34,51,0.35)',
                   transition: 'color 0.2s ease',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
                 }}
                 onMouseEnter={() => setLinkHovered(true)}
                 onMouseLeave={() => setLinkHovered(false)}
               >
                 联系我 →
-              </a>
+              </button>
             </div>
           </div>
         </div>

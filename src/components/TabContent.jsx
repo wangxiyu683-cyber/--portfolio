@@ -4,6 +4,8 @@
  */
 import React, { useState } from 'react'
 import { GRADIENT_TEXT, GRADIENT_BTN } from '../constants/styles'
+import WorkDrawer from './WorkDrawer'
+import { projects } from '../constants/projects'
 import imgGamestar   from '../assets/盒级玩家.png'
 import imgChunjie   from '../assets/新春大促.png'
 import imgHalloween from '../assets/万圣节奇妙夜.png'
@@ -13,6 +15,14 @@ import imgCoreOps   from '../assets/A级核心运营专题.png'
 import imgAnime     from '../assets/二次元.png'
 import img3A        from '../assets/3a.png'
 import imgFPS       from '../assets/fps.png'
+import imgAbA      from '../assets/A.png'
+import imgAbB      from '../assets/B.png'
+import imgDoll     from '../assets/娃娃.png'
+import imgKeycap   from '../assets/键帽.png'
+import imgAcrylic  from '../assets/摇摇乐.png'
+import imgCard1    from '../assets/卡片一.png'
+import imgCard2    from '../assets/卡片二.png'
+import imgCard3    from '../assets/卡片三.png'
 
 /* ─── Shared sub-components ──────────────────────────────────────────────── */
 
@@ -99,6 +109,8 @@ function WorkCard({
   overlayColor = 'rgba(15,15,30,0.75)',
   lightOverlay = false,
   customOverlayBg = null,   // overrides computed overlayBg when provided
+  cardMinHeight = null,     // overrides default tall/short minHeight
+  onClick = null,           // optional click handler
 }) {
   const [hovered, setHovered] = useState(false)
 
@@ -124,8 +136,9 @@ function WorkCard({
           : '0 4px 24px rgba(27,34,51,0.08), 0 1px 4px rgba(27,34,51,0.05)',
         transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
         transition: 'all 0.5s ease-out',
-        minHeight: tall ? '420px' : '260px',
+        minHeight: cardMinHeight ?? (tall ? '420px' : '260px'),
       }}
+      onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
@@ -223,7 +236,7 @@ function WorkCard({
 }
 
 /* ─── Tab 1: Operations ──────────────────────────────────────────────────── */
-function OperationsTab() {
+function OperationsTab({ onOpenProject }) {
   return (
     <div>
       <SectionHeader
@@ -270,10 +283,11 @@ function OperationsTab() {
           lightOverlay={true}
           overlayColor="rgba(10,40,100,0.95)"
           customOverlayBg="linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.85) 52%, rgba(255,255,255,0.20) 75%, transparent 95%)"
+          onClick={() => onOpenProject('tab01-card1')}
         />
-        <WorkCard label="3D 毛毡风新春大促" tag="节日活动" image={imgChunjie} objectPosition="center top" overlayColor="rgba(80,10,10,0.92)" />
-        <WorkCard label="万圣节赛博惊奇夜" tag="节日活动" image={imgHalloween} objectPosition="center center" overlayColor="rgba(8,8,40,0.95)" />
-        <WorkCard label="草图 → AI 3D → 成稿展示" tag="设计流程" wide image={imgProcess} objectPosition="center center" lightOverlay={true} overlayColor="rgba(40,35,80,0.95)" />
+        <WorkCard label="3D 毛毡风新春大促" tag="节日活动" image={imgChunjie} objectPosition="center top" overlayColor="rgba(80,10,10,0.92)" onClick={() => onOpenProject('tab01-card2')} />
+        <WorkCard label="万圣节赛博惊奇夜" tag="节日活动" image={imgHalloween} objectPosition="center center" overlayColor="rgba(8,8,40,0.95)" onClick={() => onOpenProject('tab01-card3')} />
+        <WorkCard label="AIGC 工作流复盘" tag="设计流程" wide image={imgProcess} objectPosition="center center" lightOverlay={true} overlayColor="rgba(40,35,80,0.95)" onClick={() => onOpenProject('tab01-card4')} />
       </div>
     </div>
   )
@@ -292,7 +306,7 @@ function SubSectionLabel({ children }) {
 }
 
 /* ─── Tab 2: Gaming ──────────────────────────────────────────────────────── */
-function GamingTab() {
+function GamingTab({ onOpenProject }) {
   const ips = [
     { name: '原神',         color: 'rgba(99,154,255,0.12)',  border: 'rgba(99,154,255,0.25)',  text: 'rgba(60,100,200,0.75)' },
     { name: '崩坏：星穹铁道', color: 'rgba(255,180,80,0.10)', border: 'rgba(255,180,80,0.28)',  text: 'rgba(180,110,30,0.80)' },
@@ -320,8 +334,8 @@ function GamingTab() {
           </span>
         </SubSectionLabel>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <WorkCard label="A 级核心运营专题" tag="社区运营" image={imgCoreOps} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" />
-          <WorkCard label="日常营销视觉" tag="社区运营" image={imgDaily} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" />
+          <WorkCard label="A 级核心运营专题" tag="社区运营" image={imgCoreOps} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card1')} />
+          <WorkCard label="日常营销视觉" tag="社区运营" image={imgDaily} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card2')} />
         </div>
       </div>
 
@@ -329,9 +343,9 @@ function GamingTab() {
       <div>
         <SubSectionLabel>顶流游戏合作活动</SubSectionLabel>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <WorkCard label="二次元游戏合作" tag="画风" image={imgAnime} objectPosition="center top" overlayColor="rgba(15,40,60,0.88)" />
-          <WorkCard label="3A 单机大作发行项目" tag="重工业" image={img3A} objectPosition="center 30%" overlayColor="rgba(20,15,10,0.88)" />
-          <WorkCard label="硬核战术 FPS 游戏" tag="硬核对抗" image={imgFPS} objectPosition="center center" overlayColor="rgba(80,40,5,0.88)" />
+          <WorkCard label="二次元游戏合作" tag="画风" image={imgAnime} objectPosition="center top" overlayColor="rgba(15,40,60,0.88)" onClick={() => onOpenProject('tab02-card3')} />
+          <WorkCard label="3A 单机大作发行项目" tag="重工业" image={img3A} objectPosition="center 30%" overlayColor="rgba(20,15,10,0.88)" onClick={() => onOpenProject('tab02-card4')} />
+          <WorkCard label="硬核战术 FPS 游戏" tag="硬核对抗" image={imgFPS} objectPosition="center center" overlayColor="rgba(80,40,5,0.88)" onClick={() => onOpenProject('tab02-card5')} />
         </div>
       </div>
     </div>
@@ -339,7 +353,7 @@ function GamingTab() {
 }
 
 /* ─── Tab 3: UI/UX ───────────────────────────────────────────────────────── */
-function UiUxTab() {
+function UiUxTab({ onOpenProject }) {
   const steps = [
     { num: '01', label: '建库',   desc: '题库自建 · 可视化管理' },
     { num: '02', label: '创作',   desc: '轻量化画板 · 弹窗引导' },
@@ -471,61 +485,38 @@ function UiUxTab() {
 
       {/* Main grid: iPhone mockup + cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-        {/* iPhone shell placeholder */}
+        {/* Video player */}
         <div
-          className="relative rounded-2xl overflow-hidden flex items-center justify-center"
+          className="relative rounded-2xl overflow-hidden"
           style={{
-            background: '#ffffff',
-            border: '1px solid rgba(200,196,210,0.5)',
+            background: 'transparent',
+            border: 'none',
             boxShadow: '0 10px 30px rgba(27,34,51,0.04)',
             minHeight: 500,
           }}
         >
-          <div
-            className="absolute inset-0 opacity-[0.04]"
+          <video
+            autoPlay
+            loop
+            muted
+            playsInline
+            src="/demo.mp4"
             style={{
-              backgroundImage:
-                'linear-gradient(rgba(27,34,51,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(27,34,51,0.5) 1px, transparent 1px)',
-              backgroundSize: '24px 24px',
+              position: 'absolute',
+              inset: 0,
+              width: '100%',
+              height: '100%',
+              objectFit: 'cover',
+              borderRadius: '16px',
             }}
           />
-          <div className="relative flex flex-col items-center gap-5">
-            <div
-              style={{
-                width: 148, height: 300, borderRadius: 28,
-                border: '3px solid rgba(27,34,51,0.12)',
-                background: '#f0edf5',
-                boxShadow: '0 20px 50px rgba(27,34,51,0.12), inset 0 1px 0 rgba(255,255,255,0.8)',
-                display: 'flex', flexDirection: 'column', overflow: 'hidden',
-              }}
-            >
-              <div className="flex justify-center pt-3 pb-1 shrink-0">
-                <div style={{ width: 60, height: 18, borderRadius: 10, background: 'rgba(27,34,51,0.08)' }} />
-              </div>
-              <div
-                className="flex-1 mx-2 mb-2 rounded-2xl flex items-center justify-center"
-                style={{ background: 'linear-gradient(145deg, #d8d5e8, #ccc9dc)' }}
-              >
-                <div className="flex flex-col items-center gap-2">
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M3 10 Q10 3 17 10 Q10 17 3 10Z" stroke="rgba(88,89,173,0.55)" strokeWidth="1.2" fill="none" />
-                    <circle cx="10" cy="10" r="2.5" fill="rgba(88,89,173,0.45)" />
-                  </svg>
-                  <span className="text-[9px] tracking-widest uppercase" style={{ color: 'rgba(27,34,51,0.3)' }}>Prototype</span>
-                </div>
-              </div>
-            </div>
-            <span className="text-[10px] tracking-[0.22em] uppercase" style={{ color: 'rgba(27,34,51,0.25)' }}>
-              Mobile Prototype
-            </span>
-          </div>
         </div>
 
         {/* Card stack */}
         <div className="space-y-4">
-          <WorkCard label="你画我猜 — 题库自建与可视化系统" tag="创作者降门槛" />
-          <WorkCard label="画板工具与轻量化创作交互" tag="体验流失阻断" />
-          <WorkCard label="C端猜题场景与多维裂变链路" tag="社交裂变引流" />
+          <WorkCard label="前期调研" tag="竞品分析 · 交互框架" image={imgCard1} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card1')} />
+          <WorkCard label="交互体验设计" tag="创作者降门槛" image={imgCard2} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card2')} />
+          <WorkCard label="项目复盘" tag="2.0版本迭代" image={imgCard3} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card3')} />
         </div>
       </div>
     </div>
@@ -540,13 +531,13 @@ function DataTab() {
         index="04 / Data & Brand"
         title="数据策略与品牌周边"
         subtitle="DATA & BRAND"
-        description="推行全链路 A/B Testing 验证机制，拒绝纯主观视觉推导。通过电商版面优化使核心 CTR 点击转化率获得 +34.5% 的显著提升；同时具备极强的跨媒介落地底蕴，独立主导小黑盒官方品牌周边的全链路研发——从 2D 视觉规范、工业三视图设计、到工艺打样及最终的工厂量产交付。"
+        description="主导小黑盒商城及周边业务的体验设计。通过推行核心版面的 A/B Testing 策略验证，打破纯视觉推导主观盲区，精准定位核心转化节点；同时具备跨媒介物理落地底蕴，主导官方周边全链路研发。实现从 2D 设计规范、工艺打样、供应链跟进到工厂量产交付的闭环自证。"
       />
 
       {/* A/B Test section */}
       <div className="mb-12">
         <SubSectionLabel>
-          黑盒商城核心链路改版 · CTR 点击转化率验证
+          黑盒商城核心链路改版，点击转化率验证
         </SubSectionLabel>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
@@ -566,126 +557,137 @@ function DataTab() {
               style={{ borderBottom: '1px solid rgba(27,34,51,0.05)' }}
             >
               <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: 'rgba(27,34,51,0.4)' }}>
-                Version A — 突出折扣
+                Version A — 突出游戏名称
               </span>
               <span
                 className="text-xs px-2.5 py-0.5 rounded-full font-semibold"
                 style={{ background: 'rgba(239,68,68,0.08)', color: 'rgba(185,28,28,0.70)', border: '1px solid rgba(239,68,68,0.15)' }}
               >
-                CTR 5.5%
+                pv点击率：55%
               </span>
             </div>
-            <div
-              className="flex items-center justify-center"
-              style={{ height: 180, background: 'linear-gradient(145deg, #d8d5e8, #ccc9dc)' }}
-            >
-              <span className="text-[11px] tracking-widest uppercase" style={{ color: 'rgba(27,34,51,0.2)' }}>设计稿占位</span>
+            <div style={{ aspectRatio: '16/9', height: 'auto', overflow: 'hidden' }}>
+              <img src={imgAbA} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }} />
             </div>
           </div>
 
-          {/* Version B — winner */}
+          {/* Version B */}
           <div
             style={{
               borderRadius: 16,
               overflow: 'hidden',
               background: '#ffffff',
-              border: '1px solid rgba(88,89,173,0.35)',
-              boxShadow: '0 10px 30px rgba(88,89,173,0.10)',
+              border: '1px solid rgba(200,196,210,0.5)',
+              boxShadow: '0 10px 30px rgba(27,34,51,0.03)',
             }}
           >
             <div
               className="px-5 py-3.5 flex items-center justify-between"
-              style={{ borderBottom: '1px solid rgba(88,89,173,0.12)' }}
+              style={{ borderBottom: '1px solid rgba(27,34,51,0.05)' }}
             >
-              <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: '#5859AD' }}>
-                Version B — 美化样式
+              <span className="text-[11px] font-semibold tracking-wider uppercase" style={{ color: 'rgba(27,34,51,0.4)' }}>
+                Version B — 突出折扣
               </span>
               <span
                 className="text-xs px-2.5 py-0.5 rounded-full font-semibold"
-                style={{ background: 'rgba(52,211,153,0.10)', color: 'rgba(4,120,87,0.75)', border: '1px solid rgba(52,211,153,0.22)' }}
+                style={{ background: 'rgba(34,197,94,0.08)', color: '#22c55e', border: '1px solid rgba(34,197,94,0.25)' }}
               >
-                CTR 7.4%
+                pv点击率：74%
               </span>
             </div>
-            <div
-              className="relative flex items-center justify-center"
-              style={{ height: 180, background: 'linear-gradient(145deg, #d8d5e8, #ccc9dc)' }}
-            >
-              <span className="text-[11px] tracking-widest uppercase" style={{ color: 'rgba(27,34,51,0.2)' }}>设计稿占位</span>
-              {/* Win badge */}
-              <div
-                className="absolute top-3 right-3 text-[10px] px-2.5 py-1 rounded-full font-bold"
-                style={{
-                  background: 'rgba(88,89,173,0.12)',
-                  color: '#5859AD',
-                  border: '1px solid rgba(88,89,173,0.28)',
-                }}
-              >
-                胜出 +34.5%
-              </div>
+            <div style={{ aspectRatio: '16/9', height: 'auto', overflow: 'hidden' }}>
+              <img src={imgAbB} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center center' }} />
             </div>
           </div>
         </div>
 
-        {/* Uplift metric bar */}
-        <div
-          className="mt-5 px-5 py-4 rounded-2xl flex flex-wrap items-center gap-6"
-          style={{
-            background: '#ffffff',
-            border: '1px solid rgba(200,196,210,0.5)',
-            backdropFilter: 'blur(6px)',
-          }}
-        >
+        {/* A/B Test 结论 */}
+        <div className="mt-6 grid grid-cols-3 gap-4">
           {[
-            { label: 'CTR 点击率提升', value: '+34.5%', accent: true },
-            { label: '测试周期',      value: '14 days' },
-            { label: '样本量',        value: '120,000+' },
-            { label: '结论置信度',    value: '95%' },
-            { label: '线下周边转化',  value: '数据反哺' },
-          ].map(m => (
-            <div key={m.label} className="flex flex-col gap-0.5">
-              <span
-                className="text-sm font-bold"
-                style={{ color: m.accent ? '#5859AD' : '#1b2233' }}
-              >
-                {m.value}
-              </span>
-              <span className="text-[10px] tracking-wide" style={{ color: 'rgba(27,34,51,0.35)' }}>
-                {m.label}
-              </span>
+            { value: '74%',  label: '版本 B PV 点击率' },
+            { value: '+19%', label: '较版本 A 提升' },
+            { value: '80+',  label: '覆盖游戏宣发页面数量' },
+          ].map(({ value, label }) => (
+            <div
+              key={label}
+              style={{
+                padding: '16px 18px',
+                borderRadius: 14,
+                background: 'rgba(88,89,173,0.04)',
+                border: '1px solid rgba(88,89,173,0.10)',
+              }}
+            >
+              <p style={{ fontSize: 'clamp(1.3rem, 2.5vw, 1.8rem)', fontWeight: 800, color: '#5859AD', lineHeight: 1, marginBottom: 6 }}>
+                {value}
+              </p>
+              <p style={{ fontSize: '0.75rem', color: 'rgba(88,89,173,0.6)' }}>{label}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 grid grid-cols-1 md:grid-cols-3 gap-4">
+          {[
+            { icon: '🔍', title: '发现问题',  desc: '纯视觉主导导致折扣信息被忽略，点击转化率偏低' },
+            { icon: '✅', title: '验证假设',  desc: '价格锚点前置后用户决策路径更短，点击意愿显著提升' },
+            { icon: '📐', title: '制定标准',  desc: '将「折扣信息优先级 > 游戏名称」确立为商城出稿规范并全面执行' },
+          ].map(({ icon, title, desc }) => (
+            <div
+              key={title}
+              style={{
+                padding: '18px 20px',
+                borderRadius: 14,
+                background: 'rgba(88,89,173,0.04)',
+                border: '1px solid rgba(88,89,173,0.10)',
+              }}
+            >
+              <div style={{ fontSize: 20, marginBottom: 8 }}>{icon}</div>
+              <p style={{ fontSize: '0.85rem', fontWeight: 600, color: '#5859AD', marginBottom: 4 }}>{title}</p>
+              <p style={{ fontSize: '0.8rem', color: 'rgba(88,89,173,0.65)', lineHeight: 1.6 }}>{desc}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* Brand Merchandise */}
-      <SubSectionLabel>线上数据反哺线下 · 品牌周边全链路</SubSectionLabel>
+      <SubSectionLabel>品牌周边全链路</SubSectionLabel>
       <p className="mb-6 -mt-2" style={{ fontSize: '0.8rem', color: 'rgba(27,34,51,0.45)' }}>
         三视图设计 → 厂商打样 → 量产落地，独立把控全流程
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-        <WorkCard label="小黑盒棉花娃娃" tag="毛绒软周边" tall />
-        <WorkCard label="主题键帽设计" tag="硬核重工键帽" />
-        <WorkCard label="亚克力周边系列" tag="品牌周边衍生" />
+
+      {/* Merchandise grid: 棉花娃娃 1.4fr + 键帽 1fr + 亚克力 1fr */}
+      <style>{`@media (min-width: 768px) { .merch-grid { grid-template-columns: 1.4fr 1fr 1fr; } }`}</style>
+      <div className="merch-grid grid grid-cols-1 gap-5" style={{ pointerEvents: 'none', cursor: 'default' }}>
+        <WorkCard label="小黑盒棉花娃娃" tag="毛绒软周边" image={imgDoll} objectPosition="center top" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+        <WorkCard label="主题键帽设计" tag="硬核重工键帽" image={imgKeycap} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+        <WorkCard label="亚克力周边系列" tag="品牌周边衍生" image={imgAcrylic} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
       </div>
+
     </div>
   )
 }
 
 /* ─── Main export ────────────────────────────────────────────────────────── */
 export default function TabContent({ activeTab }) {
+  const [activeProject, setActiveProject] = useState(null)
+  const openProject  = (id) => setActiveProject(projects[id] ?? null)
+  const closeProject = () => setActiveProject(null)
+
   const map = {
-    operations: <OperationsTab />,
-    gaming:     <GamingTab />,
-    uiux:       <UiUxTab />,
+    operations: <OperationsTab onOpenProject={openProject} />,
+    gaming:     <GamingTab onOpenProject={openProject} />,
+    uiux:       <UiUxTab onOpenProject={openProject} />,
     data:       <DataTab />,
   }
 
   return (
-    <section className="min-h-[80vh] px-6 md:px-16 lg:px-24 py-16 max-w-6xl mx-auto">
-      <div key={activeTab} className="tab-enter">
-        {map[activeTab]}
-      </div>
-    </section>
+    <>
+      <section className="min-h-[80vh] px-6 md:px-16 lg:px-24 py-16 max-w-6xl mx-auto">
+        <div key={activeTab} className="tab-enter">
+          {map[activeTab]}
+        </div>
+      </section>
+
+      <WorkDrawer project={activeProject} onClose={closeProject} />
+    </>
   )
 }
