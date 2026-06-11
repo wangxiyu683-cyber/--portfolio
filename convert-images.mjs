@@ -1,6 +1,6 @@
 import sharp from 'sharp';
 import { readdir, stat } from 'fs/promises';
-import { join, extname, dirname } from 'path';
+import { join, extname } from 'path';
 
 async function findImages(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
@@ -21,10 +21,17 @@ console.log(`找到 ${images.length} 张图片，开始转换...`);
 
 for (const file of images) {
   const webpPath = file.replace(/\.(png|jpg|jpeg)$/i, '.webp');
-  const before = (await stat(file)).size;
-  await sharp(file).webp({ quality: 80 }).toFile(webpPath);
-  const after = (await stat(webpPath)).size;
-  const saved = Math.round((1 - after / before) * 100);
-  console.log(`✓ ${file} ${Math.round(before/1024/1024*10)/10}MB → ${Math.round(after/1024/1024*10)/10}MB (节省${saved}%)`);
+  try {
+    const before = (await stat(file)).size;
+    await sharp(file)
+      .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 80 })
+      .toFile(webpPath);
+    const after = (await stat(webpPath)).size;
+    const saved = Math.round((1 - after / before) * 100);
+    console.log(`✓ ${file} → 节省${saved}%`);
+  } catch (e) {
+    console.log(`✗ 跳过 ${file}: ${e.message}`);
+  }
 }
 console.log('全部完成！');
