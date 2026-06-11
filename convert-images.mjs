@@ -2,6 +2,8 @@ import sharp from 'sharp';
 import { readdir, stat } from 'fs/promises';
 import { join, extname } from 'path';
 
+const MAX_WIDTH = 2400;
+
 async function findImages(dir) {
   const entries = await readdir(dir, { withFileTypes: true });
   const files = [];
@@ -24,8 +26,8 @@ for (const file of images) {
   try {
     const before = (await stat(file)).size;
     await sharp(file)
-      
-      .webp({ quality: 100 })
+      .resize({ width: MAX_WIDTH, withoutEnlargement: true })
+      .webp({ quality: 78 })
       .toFile(webpPath);
     const after = (await stat(webpPath)).size;
     const saved = Math.round((1 - after / before) * 100);
