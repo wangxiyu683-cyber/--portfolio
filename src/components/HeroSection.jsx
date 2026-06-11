@@ -4,6 +4,7 @@
  */
 import { useState } from 'react'
 import { GRADIENT_TEXT, GRADIENT_BTN } from '../constants/styles'
+import ResumeDrawer from './ResumeDrawer'
 
 /** 一组倾斜极细浅金线，用于标题装饰 */
 function CyberLines({ count = 5, className = '' }) {
@@ -125,10 +126,14 @@ function Polaroid() {
 }
 
 export default function HeroSection() {
-  const [ctaHovered,  setCtaHovered]  = useState(false)
-  const [linkHovered, setLinkHovered] = useState(false)
+  const [ctaHovered,    setCtaHovered]    = useState(false)
+  const [resumeHovered, setResumeHovered] = useState(false)
+  const [linkHovered,   setLinkHovered]   = useState(false)
+  const [resumeOpen,    setResumeOpen]    = useState(false)
 
   return (
+    <>
+    <ResumeDrawer open={resumeOpen} onClose={() => setResumeOpen(false)} />
     <section
       className="relative min-h-screen flex flex-col justify-center overflow-hidden"
       style={{ padding: '80px 0 60px' }}
@@ -289,6 +294,24 @@ export default function HeroSection() {
                 </svg>
               </button>
 
+              {/* Ghost link — view resume */}
+              <button
+                onClick={() => setResumeOpen(true)}
+                className="text-sm font-medium tracking-wide"
+                style={{
+                  color: resumeHovered ? '#5859AD' : 'rgba(27,34,51,0.35)',
+                  transition: 'color 0.2s ease',
+                  background: 'none',
+                  border: 'none',
+                  cursor: 'pointer',
+                  padding: 0,
+                }}
+                onMouseEnter={() => setResumeHovered(true)}
+                onMouseLeave={() => setResumeHovered(false)}
+              >
+                查看简历 →
+              </button>
+
               {/* Ghost link — scroll to contact */}
               <button
                 onClick={() => document.getElementById('contact-section')?.scrollIntoView({ behavior: 'smooth' })}
@@ -343,5 +366,6 @@ export default function HeroSection() {
         </div>
       </div>
     </section>
+    </>
   )
 }
