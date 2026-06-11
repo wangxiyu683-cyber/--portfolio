@@ -24,8 +24,8 @@ for (const file of images) {
   try {
     const before = (await stat(file)).size;
     await sharp(file)
-      .resize(2000, 2000, { fit: 'inside', withoutEnlargement: true })
-      .webp({ quality: 80 })
+      .resize(3000, 3000, { fit: 'inside', withoutEnlargement: true })
+      .webp({ quality: 90 })
       .toFile(webpPath);
     const after = (await stat(webpPath)).size;
     const saved = Math.round((1 - after / before) * 100);
