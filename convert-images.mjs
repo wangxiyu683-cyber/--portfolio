@@ -1,0 +1,30 @@
+import sharp from 'sharp';
+import { readdir, stat } from 'fs/promises';
+import { join, extname, dirname } from 'path';
+
+async function findImages(dir) {
+  const entries = await readdir(dir, { withFileTypes: true });
+  const files = [];
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+    if (entry.isDirectory()) {
+      files.push(...await findImages(fullPath));
+    } else if (['.png', '.jpg', '.jpeg'].includes(extname(entry.name).toLowerCase())) {
+      files.push(fullPath);
+    }
+  }
+  return files;
+}
+
+const images = await findImages('./public');
+console.log(`找到 ${images.length} 张图片，开始转换...`);
+
+for (const file of images) {
+  const webpPath = file.replace(/\.(png|jpg|jpeg)$/i, '.webp');
+  const before = (await stat(file)).size;
+  await sharp(file).webp({ quality: 80 }).toFile(webpPath);
+  const after = (await stat(webpPath)).size;
+  const saved = Math.round((1 - after / before) * 100);
+  console.log(`✓ ${file} ${Math.round(before/1024/1024*10)/10}MB → ${Math.round(after/1024/1024*10)/10}MB (节省${saved}%)`);
+}
+console.log('全部完成！');

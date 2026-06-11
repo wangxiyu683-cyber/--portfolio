@@ -13,9 +13,9 @@ export const projects = {
         type: "image",
         layout: "grid",
         images: [
-          { src: "/community/a-level/a-1.png", label: "" },
-          { src: "/community/a-level/a-2.png", label: "" },
-          { src: "/community/a-level/a-3.png", label: "" },
+          { src: "/community/a-level/a-1.webp", label: "" },
+          { src: "/community/a-level/a-2.webp", label: "" },
+          { src: "/community/a-level/a-3.webp", label: "" },
         ],
       },
     ],
@@ -34,15 +34,15 @@ export const projects = {
         type: "image",
         layout: "grid",
         images: [
-          { src: "/community/daily/home-banner.png", label: "" },
-          { src: "/community/daily/daily-1.png",     label: "" },
-          { src: "/community/daily/daily-2.png",     label: "" },
-          { src: "/community/daily/daily-3.png",     label: "" },
-          { src: "/community/daily/daily-4.png",     label: "" },
-          { src: "/community/daily/daily-5.png",     label: "" },
-          { src: "/community/daily/daily-6.png",     label: "" },
-          { src: "/community/daily/daily-7.png",     label: "" },
-          { src: "/community/daily/daily-8.png",     label: "" },
+          { src: "/community/daily/home-banner.webp", label: "" },
+          { src: "/community/daily/daily-1.webp",     label: "" },
+          { src: "/community/daily/daily-2.webp",     label: "" },
+          { src: "/community/daily/daily-3.webp",     label: "" },
+          { src: "/community/daily/daily-4.webp",     label: "" },
+          { src: "/community/daily/daily-5.webp",     label: "" },
+          { src: "/community/daily/daily-6.webp",     label: "" },
+          { src: "/community/daily/daily-7.webp",     label: "" },
+          { src: "/community/daily/daily-8.webp",     label: "" },
         ],
       },
     ],
@@ -61,12 +61,12 @@ export const projects = {
         type: "image",
         layout: "grid",
         images: [
-          { src: "/ip/anime/h5-1.png", label: "" },
-          { src: "/ip/anime/h5-2.png", label: "" },
-          { src: "/ip/anime/h5-3.png", label: "" },
-          { src: "/ip/anime/h5-4.png", label: "" },
-          { src: "/ip/anime/h5-5.png", label: "" },
-          { src: "/ip/anime/h5.png",   label: "" },
+          { src: "/ip/anime/h5-1.webp", label: "" },
+          { src: "/ip/anime/h5-2.webp", label: "" },
+          { src: "/ip/anime/h5-3.webp", label: "" },
+          { src: "/ip/anime/h5-4.webp", label: "" },
+          { src: "/ip/anime/h5-5.webp", label: "" },
+          { src: "/ip/anime/h5.webp",   label: "" },
         ],
       },
     ],
@@ -84,7 +84,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/ip/wukong/splash-1.png",
+        src: "/ip/wukong/splash-1.webp",
       },
     ],
   },
@@ -102,12 +102,12 @@ export const projects = {
         type: "image",
         layout: "grid",
         images: [
-          { src: "/ip/fps/delta-1.png",  label: "" },
-          { src: "/ip/fps/delta-2.png",  label: "" },
-          { src: "/ip/fps/delta-3.png",  label: "" },
-          { src: "/ip/fps/valorant.png", label: "" },
-          { src: "/ip/fps/cs2.png",      label: "" },
-          { src: "/ip/fps/mobile.png",   label: "" },
+          { src: "/ip/fps/delta-1.webp",  label: "" },
+          { src: "/ip/fps/delta-2.webp",  label: "" },
+          { src: "/ip/fps/delta-3.webp",  label: "" },
+          { src: "/ip/fps/valorant.webp", label: "" },
+          { src: "/ip/fps/cs2.webp",      label: "" },
+          { src: "/ip/fps/mobile.webp",   label: "" },
         ],
       },
     ],
@@ -133,7 +133,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/gamestar/h5.png",
+        src: "/gamestar/h5.webp",
       },
     ],
   },
@@ -143,7 +143,7 @@ export const projects = {
     blocks: [
       {
         type: "hero",
-        image: "/spring-festival/kv.png",
+        image: "/spring-festival/kv.webp",
         title: "3D 毛毡风新春大促",
         tags: ["节日活动", "3D 物料", "AIGC 工作流"],
       },
@@ -157,7 +157,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/spring-festival/kv.png",
+        src: "/spring-festival/kv.webp",
       },
     ],
   },
@@ -167,7 +167,7 @@ export const projects = {
     blocks: [
       {
         type: "hero",
-        image: "/halloween/kv.png",
+        image: "/halloween/kv.webp",
         title: "万圣节赛博惊奇夜",
         tags: ["节日活动", "赛博朋克", "全链路物料"],
       },
@@ -181,7 +181,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/halloween/kv.png",
+        src: "/halloween/kv.webp",
       },
     ],
   },
@@ -206,7 +206,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/aigc-process/gamestar/gamestar-process.png",
+        src: "/aigc-process/gamestar/gamestar-process.webp",
       },
       {
         type: "text",
@@ -217,7 +217,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/aigc-process/spring/spring-process.png",
+        src: "/aigc-process/spring/spring-process.webp",
       },
       {
         type: "text",
@@ -229,8 +229,8 @@ export const projects = {
         type: "image",
         layout: "grid",
         images: [
-          { src: "/aigc-process/halloween/halloween-prompt.png",    label: "AI 提示词发散过程" },
-          { src: "/aigc-process/halloween/halloween-iteration.png", label: "图像生成迭代" },
+          { src: "/aigc-process/halloween/halloween-prompt.webp",    label: "AI 提示词发散过程" },
+          { src: "/aigc-process/halloween/halloween-iteration.webp", label: "图像生成迭代" },
         ],
       },
       {
@@ -275,7 +275,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/uiux/research.png",
+        src: "/uiux/research.webp",
       },
     ],
   },
@@ -333,7 +333,7 @@ export const projects = {
       {
         type: "image",
         layout: "full",
-        src: "/uiux/review.png",
+        src: "/uiux/review.webp",
       },
     ],
   },

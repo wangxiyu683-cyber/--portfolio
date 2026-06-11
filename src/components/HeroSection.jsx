@@ -58,7 +58,7 @@ function Polaroid() {
           />
           {/* Real photo */}
           <img
-            src="/avatar.jpg"
+            src="/avatar.webp"
             alt="个人照片"
             className="absolute inset-0 w-full h-full object-cover object-top"
           />
