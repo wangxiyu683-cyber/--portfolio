@@ -3,6 +3,7 @@
  * 白光微弱描边半透明卡片 · 上浮 hover · 白金菱形装饰
  */
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import { GRADIENT_TEXT, GRADIENT_BTN } from '../constants/styles'
 import WorkDrawer from './WorkDrawer'
 import { projects } from '../constants/projects'
@@ -23,6 +24,15 @@ import imgAcrylic  from '../assets/摇摇乐.webp'
 import imgCard1    from '../assets/卡片一.webp'
 import imgCard2    from '../assets/卡片二.webp'
 import imgCard3    from '../assets/卡片三.webp'
+
+/* ─── Shared animation config ────────────────────────────────────────────── */
+const EASE = [0.22, 1, 0.36, 1]
+const fadeUp = (delay = 0) => ({
+  initial: { opacity: 0, y: 40 },
+  whileInView: { opacity: 1, y: 0 },
+  viewport: { once: true },
+  transition: { duration: 0.6, ease: EASE, delay },
+})
 
 /* ─── Shared sub-components ──────────────────────────────────────────────── */
 
@@ -50,7 +60,7 @@ function CyberLines({ count = 4, className = '' }) {
 /** Section header with diamond accent and cyber lines */
 function SectionHeader({ index, title, subtitle, description }) {
   return (
-    <div className="mb-14 max-w-2xl">
+    <motion.div className="mb-14 max-w-2xl" {...fadeUp(0)}>
       {/* Eyebrow */}
       <div className="flex items-center gap-3 mb-5">
         <CyberLines count={3} />
@@ -77,7 +87,7 @@ function SectionHeader({ index, title, subtitle, description }) {
       <h2
         className="font-bold leading-tight mb-1"
         style={{
-          fontSize: 'clamp(2rem, 5vw, 3.2rem)',
+          fontSize: 'clamp(2.4rem, 5.5vw, 3.8rem)',
           letterSpacing: '-0.025em',
           ...GRADIENT_TEXT,
         }}
@@ -98,7 +108,7 @@ function SectionHeader({ index, title, subtitle, description }) {
           {description}
         </p>
       )}
-    </div>
+    </motion.div>
   )
 }
 
@@ -125,26 +135,23 @@ function WorkCard({
     : { background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.25)' }
 
   return (
-    <div
+    <motion.div
       className={`group relative overflow-hidden cursor-pointer ${wide ? 'md:col-span-2' : ''}`}
       style={{
         background: '#ffffff',
         border: hovered ? '1px solid rgba(88,89,173,0.40)' : '1px solid rgba(200,196,210,0.55)',
         borderRadius: '16px',
-        boxShadow: hovered
-          ? '0 24px 56px rgba(27,34,51,0.14), 0 6px 16px rgba(27,34,51,0.08)'
-          : '0 4px 24px rgba(27,34,51,0.08), 0 1px 4px rgba(27,34,51,0.05)',
-        transform: hovered ? 'translateY(-4px)' : 'translateY(0)',
-        transition: 'all 0.5s ease-out',
         minHeight: cardMinHeight ?? (tall ? '420px' : '260px'),
       }}
+      whileHover={{ scale: 1.02, y: -4, boxShadow: '0 20px 60px rgba(88,89,173,0.15)' }}
+      transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {image ? (
         /* ── Real image — position:absolute fills the card, no wrapper div ── */
-        <img
+        <motion.img
           src={image}
           alt={label}
           style={{
@@ -155,6 +162,8 @@ function WorkCard({
             objectFit: 'cover',
             objectPosition: objectPosition || 'center center',
           }}
+          animate={{ scale: hovered ? 1.04 : 1 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         />
       ) : (
         <>
@@ -217,21 +226,23 @@ function WorkCard({
             </span>
           </div>
           {/* Arrow */}
-          <div
-            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 transition-all duration-300"
+          <motion.div
+            className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
             style={{
               background: hovered ? GRADIENT_BTN.background : 'rgba(88,89,173,0.12)',
-              opacity: hovered ? 1 : 0,
-              transform: hovered ? 'scale(1)' : 'scale(0.7)',
             }}
+            animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.7 }}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.97 }}
+            transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
               <path d="M1 6h10M6 1l5 5-5 5" stroke={hovered ? '#fff' : '#5859AD'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-          </div>
+          </motion.div>
         </div>
       </div>
-    </div>
+    </motion.div>
   )
 }
 
@@ -273,21 +284,29 @@ function OperationsTab({ onOpenProject }) {
       </div>
 
       {/* Cards grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-        <WorkCard
-          label="GAME STAR 盒级玩家召集令"
-          tag="校园招聘主视觉"
-          wide tall
-          image={imgGamestar}
-          objectPosition="center 40%"
-          lightOverlay={true}
-          overlayColor="rgba(10,40,100,0.95)"
-          customOverlayBg="linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.85) 52%, rgba(255,255,255,0.20) 75%, transparent 95%)"
-          onClick={() => onOpenProject('tab01-card1')}
-        />
-        <WorkCard label="3D 毛毡风新春大促" tag="节日活动" image={imgChunjie} objectPosition="center top" overlayColor="rgba(80,10,10,0.92)" onClick={() => onOpenProject('tab01-card2')} />
-        <WorkCard label="万圣节赛博惊奇夜" tag="节日活动" image={imgHalloween} objectPosition="center center" overlayColor="rgba(8,8,40,0.95)" onClick={() => onOpenProject('tab01-card3')} />
-        <WorkCard label="AIGC 工作流复盘" tag="设计流程" wide image={imgProcess} objectPosition="center center" lightOverlay={true} overlayColor="rgba(40,35,80,0.95)" onClick={() => onOpenProject('tab01-card4')} />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <motion.div className="md:col-span-2" {...fadeUp(0 * 0.08)}>
+          <WorkCard
+            label="GAME STAR 盒级玩家召集令"
+            tag="校园招聘主视觉"
+            wide tall
+            image={imgGamestar}
+            objectPosition="center 40%"
+            lightOverlay={true}
+            overlayColor="rgba(10,40,100,0.95)"
+            customOverlayBg="linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.85) 52%, rgba(255,255,255,0.20) 75%, transparent 95%)"
+            onClick={() => onOpenProject('tab01-card1')}
+          />
+        </motion.div>
+        <motion.div {...fadeUp(1 * 0.08)}>
+          <WorkCard label="3D 毛毡风新春大促" tag="节日活动" image={imgChunjie} objectPosition="center top" overlayColor="rgba(80,10,10,0.92)" onClick={() => onOpenProject('tab01-card2')} />
+        </motion.div>
+        <motion.div {...fadeUp(2 * 0.08)}>
+          <WorkCard label="万圣节赛博惊奇夜" tag="节日活动" image={imgHalloween} objectPosition="center center" overlayColor="rgba(8,8,40,0.95)" onClick={() => onOpenProject('tab01-card3')} />
+        </motion.div>
+        <motion.div className="md:col-span-2" {...fadeUp(3 * 0.08)}>
+          <WorkCard label="AIGC 工作流复盘" tag="设计流程" wide image={imgProcess} objectPosition="center center" lightOverlay={true} overlayColor="rgba(40,35,80,0.95)" onClick={() => onOpenProject('tab01-card4')} />
+        </motion.div>
       </div>
     </div>
   )
@@ -333,19 +352,29 @@ function GamingTab({ onOpenProject }) {
             HeyBox Community &amp; UGC Activation
           </span>
         </SubSectionLabel>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
-          <WorkCard label="A 级核心运营专题" tag="社区运营" image={imgCoreOps} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card1')} />
-          <WorkCard label="日常营销视觉" tag="社区运营" image={imgDaily} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card2')} />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+          <motion.div {...fadeUp(0 * 0.08)}>
+            <WorkCard label="A 级核心运营专题" tag="社区运营" image={imgCoreOps} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card1')} />
+          </motion.div>
+          <motion.div {...fadeUp(1 * 0.08)}>
+            <WorkCard label="日常营销视觉" tag="社区运营" image={imgDaily} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card2')} />
+          </motion.div>
         </div>
       </div>
 
       {/* ── 区块二：顶流游戏合作活动 ── */}
       <div>
         <SubSectionLabel>顶流游戏合作活动</SubSectionLabel>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-          <WorkCard label="二次元游戏合作" tag="画风" image={imgAnime} objectPosition="center top" overlayColor="rgba(15,40,60,0.88)" onClick={() => onOpenProject('tab02-card3')} />
-          <WorkCard label="3A 单机大作发行项目" tag="重工业" image={img3A} objectPosition="center 30%" overlayColor="rgba(20,15,10,0.88)" onClick={() => onOpenProject('tab02-card4')} />
-          <WorkCard label="硬核战术 FPS 游戏" tag="硬核对抗" image={imgFPS} objectPosition="center center" overlayColor="rgba(80,40,5,0.88)" onClick={() => onOpenProject('tab02-card5')} />
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+          <motion.div {...fadeUp(0 * 0.08)}>
+            <WorkCard label="二次元游戏合作" tag="画风" image={imgAnime} objectPosition="center top" overlayColor="rgba(15,40,60,0.88)" onClick={() => onOpenProject('tab02-card3')} />
+          </motion.div>
+          <motion.div {...fadeUp(1 * 0.08)}>
+            <WorkCard label="3A 单机大作发行项目" tag="重工业" image={img3A} objectPosition="center 30%" overlayColor="rgba(20,15,10,0.88)" onClick={() => onOpenProject('tab02-card4')} />
+          </motion.div>
+          <motion.div {...fadeUp(2 * 0.08)}>
+            <WorkCard label="硬核战术 FPS 游戏" tag="硬核对抗" image={imgFPS} objectPosition="center center" overlayColor="rgba(80,40,5,0.88)" onClick={() => onOpenProject('tab02-card5')} />
+          </motion.div>
         </div>
       </div>
     </div>
@@ -484,7 +513,7 @@ function UiUxTab({ onOpenProject }) {
       </div>
 
       {/* Main grid: iPhone mockup + cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
         {/* Video player */}
         <div
           className="relative rounded-2xl overflow-hidden"
@@ -514,9 +543,15 @@ function UiUxTab({ onOpenProject }) {
 
         {/* Card stack */}
         <div className="space-y-4">
-          <WorkCard label="前期调研" tag="竞品分析 · 交互框架" image={imgCard1} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card1')} />
-          <WorkCard label="交互体验设计" tag="创作者降门槛" image={imgCard2} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card2')} />
-          <WorkCard label="项目复盘" tag="2.0版本迭代" image={imgCard3} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card3')} />
+          <motion.div {...fadeUp(0 * 0.08)}>
+            <WorkCard label="前期调研" tag="竞品分析 · 交互框架" image={imgCard1} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card1')} />
+          </motion.div>
+          <motion.div {...fadeUp(1 * 0.08)}>
+            <WorkCard label="交互体验设计" tag="创作者降门槛" image={imgCard2} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card2')} />
+          </motion.div>
+          <motion.div {...fadeUp(2 * 0.08)}>
+            <WorkCard label="项目复盘" tag="2.0版本迭代" image={imgCard3} lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(200,238,255,0.97) 0%, rgba(200,238,255,0.85) 20%, rgba(200,238,255,0.40) 50%, rgba(200,238,255,0.08) 75%, transparent 100%)" onClick={() => onOpenProject('tab03-card3')} />
+          </motion.div>
         </div>
       </div>
     </div>
@@ -656,10 +691,16 @@ function DataTab() {
 
       {/* Merchandise grid: 棉花娃娃 1.4fr + 键帽 1fr + 亚克力 1fr */}
       <style>{`@media (min-width: 768px) { .merch-grid { grid-template-columns: 1.4fr 1fr 1fr; } }`}</style>
-      <div className="merch-grid grid grid-cols-1 gap-5" style={{ pointerEvents: 'none', cursor: 'default' }}>
-        <WorkCard label="小黑盒棉花娃娃" tag="毛绒软周边" image={imgDoll} objectPosition="center top" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
-        <WorkCard label="主题键帽设计" tag="硬核重工键帽" image={imgKeycap} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
-        <WorkCard label="亚克力周边系列" tag="品牌周边衍生" image={imgAcrylic} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+      <div className="merch-grid grid grid-cols-1 gap-8" style={{ pointerEvents: 'none', cursor: 'default' }}>
+        <motion.div {...fadeUp(0 * 0.08)}>
+          <WorkCard label="小黑盒棉花娃娃" tag="毛绒软周边" image={imgDoll} objectPosition="center top" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+        </motion.div>
+        <motion.div {...fadeUp(1 * 0.08)}>
+          <WorkCard label="主题键帽设计" tag="硬核重工键帽" image={imgKeycap} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+        </motion.div>
+        <motion.div {...fadeUp(2 * 0.08)}>
+          <WorkCard label="亚克力周边系列" tag="品牌周边衍生" image={imgAcrylic} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+        </motion.div>
       </div>
 
     </div>
@@ -681,7 +722,7 @@ export default function TabContent({ activeTab }) {
 
   return (
     <>
-      <section className="min-h-[80vh] px-6 md:px-16 lg:px-24 py-16 max-w-6xl mx-auto">
+      <section className="min-h-[80vh] px-6 md:px-16 lg:px-24 py-24 max-w-6xl mx-auto">
         <div key={activeTab} className="tab-enter">
           {map[activeTab]}
         </div>

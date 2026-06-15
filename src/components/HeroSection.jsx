@@ -3,6 +3,7 @@
  * 浮雕底纹 · 斜线科技装饰 · 拍立得头像 · 呼吸 Pulse CTA
  */
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import { GRADIENT_TEXT, GRADIENT_BTN } from '../constants/styles'
 import ResumeDrawer from './ResumeDrawer'
 
@@ -136,7 +137,7 @@ export default function HeroSection() {
     <ResumeDrawer open={resumeOpen} onClose={() => setResumeOpen(false)} />
     <section
       className="relative min-h-screen flex flex-col justify-center overflow-hidden"
-      style={{ padding: '80px 0 60px' }}
+      style={{ padding: '80px 0 128px' }}
     >
       {/* ── Deep-space watermark ─────────────────────────────── */}
       <div
@@ -184,12 +185,22 @@ export default function HeroSection() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
 
           {/* ════ LEFT — Polaroid ════ */}
-          <div className="flex justify-center lg:justify-start order-2 lg:order-1">
+          <motion.div
+            className="flex justify-center lg:justify-start order-2 lg:order-1"
+            initial={{ opacity: 0, x: 60 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
+          >
             <Polaroid />
-          </div>
+          </motion.div>
 
           {/* ════ RIGHT — Text ════ */}
-          <div className="order-1 lg:order-2 space-y-7">
+          <motion.div
+            className="order-1 lg:order-2 space-y-7"
+            initial={{ opacity: 0, y: 40 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.1 }}
+          >
 
             {/* Eyebrow */}
             <div className="flex items-center gap-3">
@@ -208,13 +219,13 @@ export default function HeroSection() {
               <h1 className="font-bold leading-[1.05]" style={{ letterSpacing: '-0.025em' }}>
                 <span
                   className="block"
-                  style={{ fontSize: 'clamp(3rem, 7.5vw, 5.8rem)', ...GRADIENT_TEXT }}
+                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', ...GRADIENT_TEXT }}
                 >
                   设计作品
                 </span>
                 <span
                   className="block"
-                  style={{ fontSize: 'clamp(3rem, 7.5vw, 5.8rem)', ...GRADIENT_TEXT }}
+                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', ...GRADIENT_TEXT }}
                 >
                   合集
                 </span>
@@ -270,7 +281,12 @@ export default function HeroSection() {
             </div>
 
             {/* CTA row */}
-            <div className="flex items-center gap-5 pt-1">
+            <motion.div
+              className="flex items-center gap-5 pt-1"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.5 }}
+            >
               {/* Primary button — pulse glow + reactive hover */}
               <button
                 className="btn-pulse flex items-center gap-2 px-7 py-3.5 rounded-full text-sm font-semibold tracking-wide"
@@ -329,8 +345,8 @@ export default function HeroSection() {
               >
                 联系我 →
               </button>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
         </div>
 
         {/* ── Stats bar ──────────────────────────────────────── */}
