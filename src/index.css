@@ -79,6 +79,25 @@ body {
 }
 .tab-enter { animation: fadeSlideUp 0.42s cubic-bezier(0.22, 1, 0.36, 1) both; }
 
+/* Animated moving gradient for GradientText */
+@keyframes gradient-text-move {
+  0%   { background-position: 0% 50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Idle pendulum swing for LanyardCard */
+@keyframes lanyard-swing {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50%      { transform: rotate(2.5deg); }
+}
+.lanyard-swing {
+  animation: lanyard-swing 4.2s ease-in-out infinite;
+}
+.lanyard-swing:hover {
+  animation-play-state: paused;
+}
+
 /* Hide scrollbar for tab bar */
 .no-scrollbar::-webkit-scrollbar { display: none; }
 .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }

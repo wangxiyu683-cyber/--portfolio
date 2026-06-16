@@ -4,8 +4,10 @@
  */
 import { useState } from 'react'
 import { motion } from 'framer-motion'
-import { GRADIENT_TEXT, GRADIENT_BTN } from '../constants/styles'
+import { GRADIENT_BTN } from '../constants/styles'
 import ResumeDrawer from './ResumeDrawer'
+import GradientText from './GradientText'
+import LanyardCard from './LanyardCard'
 
 /** 一组倾斜极细浅金线，用于标题装饰 */
 function CyberLines({ count = 5, className = '' }) {
@@ -24,104 +26,6 @@ function CyberLines({ count = 5, className = '' }) {
           }}
         />
       ))}
-    </div>
-  )
-}
-
-/** 拍立得头像容器 — 独立组件，持有自己的 hover 状态 */
-function Polaroid() {
-  const [hovered, setHovered] = useState(false)
-
-  return (
-    <div className="group relative" style={{ perspective: '800px' }}>
-      {/* Polaroid frame */}
-      <div
-        className="relative bg-white p-3 pb-12"
-        style={{
-          transform: hovered ? 'rotate(0deg) scale(1.015)' : 'rotate(1deg) scale(1)',
-          transition: 'transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)',
-          boxShadow: '0 24px 60px rgba(27,34,51,0.12), 0 6px 16px rgba(27,34,51,0.06)',
-          borderRadius: '4px',
-          willChange: 'transform',
-        }}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-      >
-        {/* Photo area */}
-        <div className="w-64 h-72 md:w-72 md:h-80 overflow-hidden relative">
-          {/* Decorative grid */}
-          <div
-            className="absolute inset-0 opacity-[0.07]"
-            style={{
-              backgroundImage:
-                'linear-gradient(rgba(27,34,51,0.5) 1px, transparent 1px), linear-gradient(90deg, rgba(27,34,51,0.5) 1px, transparent 1px)',
-              backgroundSize: '28px 28px',
-            }}
-          />
-          {/* Real photo */}
-          <img
-            src="/avatar.webp"
-            alt="个人照片"
-            className="absolute inset-0 w-full h-full object-cover object-top"
-          />
-
-          {/* Corner accent lines — top-left */}
-          <div className="absolute top-3 left-3 flex flex-col gap-[3px]">
-            {[14, 10, 6].map(w => (
-              <div key={w} style={{ width: w, height: 1.2, background: 'rgba(88,89,173,0.4)', borderRadius: 1 }} />
-            ))}
-          </div>
-          {/* Corner accent lines — bottom-right */}
-          <div className="absolute bottom-3 right-3 flex flex-col gap-[3px] items-end">
-            {[6, 10, 14].map(w => (
-              <div key={w} style={{ width: w, height: 1.2, background: 'rgba(88,89,173,0.4)', borderRadius: 1 }} />
-            ))}
-          </div>
-        </div>
-
-        {/* Polaroid bottom strip */}
-        <div className="mt-3 flex items-center justify-between px-1">
-          <span
-            className="text-[11px] tracking-[0.18em] uppercase font-light"
-            style={{ color: 'rgba(27,34,51,0.35)' }}
-          >
-            UI · UX · Visual
-          </span>
-          <CyberLines count={3} />
-        </div>
-      </div>
-
-      {/* Ground shadow */}
-      <div
-        className="absolute -bottom-5 left-1/2 -translate-x-1/2 rounded-full blur-2xl"
-        style={{ width: '75%', height: 24, background: 'rgba(27,34,51,0.10)' }}
-      />
-
-      {/* Floating stat pill — top-right */}
-      <div
-        className="absolute -right-8 top-10 px-4 py-2.5 rounded-2xl"
-        style={{
-          background: 'rgba(255,255,255,0.85)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.9)',
-          boxShadow: '0 8px 24px rgba(27,34,51,0.08)',
-        }}
-      >
-        <div className="text-base font-black" style={{ color: '#5859AD', lineHeight: 1 }}>Designer</div>
-      </div>
-
-      {/* Floating stat pill — bottom-left */}
-      <div
-        className="absolute -left-8 bottom-16 px-4 py-2.5 rounded-2xl"
-        style={{
-          background: 'rgba(255,255,255,0.85)',
-          backdropFilter: 'blur(12px)',
-          border: '1px solid rgba(255,255,255,0.9)',
-          boxShadow: '0 8px 24px rgba(27,34,51,0.08)',
-        }}
-      >
-        <div className="text-base font-black" style={{ color: '#5859AD', lineHeight: 1 }}>AIGC</div>
-      </div>
     </div>
   )
 }
@@ -184,14 +88,14 @@ export default function HeroSection() {
       <div className="relative z-10 max-w-6xl mx-auto w-full px-6 md:px-16 lg:px-24">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center">
 
-          {/* ════ LEFT — Polaroid ════ */}
+          {/* ════ LEFT — Lanyard Card ════ */}
           <motion.div
             className="flex justify-center lg:justify-start order-2 lg:order-1"
             initial={{ opacity: 0, x: 60 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.3 }}
           >
-            <Polaroid />
+            <LanyardCard image="/avatar.webp" />
           </motion.div>
 
           {/* ════ RIGHT — Text ════ */}
@@ -216,19 +120,25 @@ export default function HeroSection() {
 
             {/* Headline */}
             <div className="space-y-0 leading-none">
-              <h1 className="font-bold leading-[1.05]" style={{ letterSpacing: '-0.025em' }}>
-                <span
+              <h1 className="font-bold leading-[1.28]" style={{ letterSpacing: '0.005em' }}>
+                <GradientText
                   className="block"
-                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', ...GRADIENT_TEXT }}
+                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)' }}
+                  colors={['#323360', '#2F307E', '#5556C4']}
+                  animationSpeed={8}
+                  showBorder={false}
                 >
-                  设计作品
-                </span>
-                <span
+                  Design
+                </GradientText>
+                <GradientText
                   className="block"
-                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)', ...GRADIENT_TEXT }}
+                  style={{ fontSize: 'clamp(3rem, 7vw, 5rem)' }}
+                  colors={['#323360', '#2F307E', '#5556C4']}
+                  animationSpeed={8}
+                  showBorder={false}
                 >
-                  合集
-                </span>
+                  Portfolio
+                </GradientText>
               </h1>
               <p
                 className="font-light tracking-[0.12em]"
@@ -347,38 +257,6 @@ export default function HeroSection() {
               </button>
             </motion.div>
           </motion.div>
-        </div>
-
-        {/* ── Stats bar ──────────────────────────────────────── */}
-        <div
-          className="mt-20 pt-10 grid grid-cols-2 md:grid-cols-4 gap-8"
-          style={{ borderTop: '1px solid rgba(88,89,173,0.20)' }}
-        >
-          {[
-            { num: '2+',   label: '年设计经验',    en: 'Years Exp.'  },
-            { num: '150+', label: '落地项目',       en: 'Projects'    },
-            { num: '10+',  label: '顶流 IP 合作',   en: 'IP Collab'   },
-            { num: '40%',  label: 'AIGC 效率提升', en: 'Efficiency'  },
-          ].map(({ num, label, en }) => (
-            <div key={label} className="text-center">
-              <div
-                className="font-black mb-0.5"
-                style={{
-                  fontSize: 'clamp(1.8rem, 3.5vw, 2.6rem)',
-                  letterSpacing: '-0.02em',
-                  color: '#5859AD',
-                }}
-              >
-                {num}
-              </div>
-              <div className="text-xs font-medium mb-0.5" style={{ color: 'rgba(88,89,173,0.55)' }}>
-                {label}
-              </div>
-              <div className="text-[10px] tracking-widest uppercase" style={{ color: 'rgba(27,34,51,0.2)' }}>
-                {en}
-              </div>
-            </div>
-          ))}
         </div>
       </div>
     </section>

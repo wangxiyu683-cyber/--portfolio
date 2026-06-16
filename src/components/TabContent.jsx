@@ -2,8 +2,8 @@
  * TabContent — 无边界画册卡片
  * 白光微弱描边半透明卡片 · 上浮 hover · 白金菱形装饰
  */
-import React, { useState } from 'react'
-import { motion } from 'framer-motion'
+import React, { useState, useRef } from 'react'
+import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion'
 import { GRADIENT_TEXT, GRADIENT_BTN } from '../constants/styles'
 import WorkDrawer from './WorkDrawer'
 import { projects } from '../constants/projects'
@@ -123,31 +123,72 @@ function WorkCard({
   onClick = null,           // optional click handler
 }) {
   const [hovered, setHovered] = useState(false)
+  const cardRef = useRef(null)
+
+  /* Tilt-on-mouse-move spring physics */
+  const mvX = useMotionValue(0)
+  const mvY = useMotionValue(0)
+  const springCfg = { damping: 20, stiffness: 260, mass: 1 }
+  const rotateX = useSpring(useTransform(mvY, [-0.5, 0.5], [24, -24]), springCfg)
+  const rotateY = useSpring(useTransform(mvX, [-0.5, 0.5], [-24, 24]), springCfg)
+
+  /* Cursor-follow tooltip position (in card-local px) */
+  const tipX = useMotionValue(0)
+  const tipY = useMotionValue(0)
+  const tipSpringCfg = { damping: 22, stiffness: 300, mass: 0.6 }
+  const tipXSpring = useSpring(tipX, tipSpringCfg)
+  const tipYSpring = useSpring(tipY, tipSpringCfg)
+  const tipScale = useSpring(0, { damping: 18, stiffness: 280 })
+
+  const handleMouseMove = (e) => {
+    const rect = cardRef.current?.getBoundingClientRect()
+    if (!rect) return
+    mvX.set((e.clientX - rect.left) / rect.width - 0.5)
+    mvY.set((e.clientY - rect.top) / rect.height - 0.5)
+    tipX.set(e.clientX - rect.left)
+    tipY.set(e.clientY - rect.top)
+  }
+  const handleMouseEnterTilt = (e) => {
+    const rect = cardRef.current?.getBoundingClientRect()
+    if (rect) {
+      tipX.set(e.clientX - rect.left)
+      tipY.set(e.clientY - rect.top)
+    }
+    tipScale.set(1)
+  }
+  const handleMouseLeaveTilt = () => {
+    mvX.set(0)
+    mvY.set(0)
+    tipScale.set(0)
+  }
 
   const defaultOverlayBg = lightOverlay
     ? 'linear-gradient(to top, rgba(255,255,255,0.97) 0%, rgba(255,255,255,0.75) 55%, rgba(255,255,255,0.10) 80%, transparent 100%)'
     : `linear-gradient(to top, ${overlayColor} 0%, ${overlayColor.replace(/[\d.]+\)$/, '0.6)')} 55%, ${overlayColor.replace(/[\d.]+\)$/, '0.15)')} 80%, transparent 100%)`
 
   const overlayBg   = customOverlayBg ?? defaultOverlayBg
-  const labelColor  = lightOverlay ? '#5859AD' : '#ffffff'
-  const tagStyle    = lightOverlay
-    ? { background: 'rgba(88,89,173,0.10)', color: '#5859AD', border: '1px solid rgba(88,89,173,0.22)' }
-    : { background: 'rgba(255,255,255,0.15)', color: '#ffffff', border: '1px solid rgba(255,255,255,0.25)' }
 
   return (
     <motion.div
+      ref={cardRef}
       className={`group relative overflow-hidden cursor-pointer ${wide ? 'md:col-span-2' : ''}`}
       style={{
         background: '#ffffff',
         border: hovered ? '1px solid rgba(88,89,173,0.40)' : '1px solid rgba(200,196,210,0.55)',
         borderRadius: '16px',
         minHeight: cardMinHeight ?? (tall ? '420px' : '260px'),
+        height: '100%',
+        perspective: 800,
+        rotateX,
+        rotateY,
+        transformStyle: 'preserve-3d',
       }}
       whileHover={{ scale: 1.02, y: -4, boxShadow: '0 20px 60px rgba(88,89,173,0.15)' }}
       transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
       onClick={onClick}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
+      onMouseEnter={(e) => { setHovered(true); handleMouseEnterTilt(e) }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={() => { setHovered(false); handleMouseLeaveTilt() }}
     >
       {image ? (
         /* ── Real image — position:absolute fills the card, no wrapper div ── */
@@ -204,44 +245,49 @@ function WorkCard({
         </>
       )}
 
-      {/* Bottom gradient meta bar */}
+      {/* Bottom gradient meta bar — visible on hover */}
       <div
         className="absolute bottom-0 left-0 right-0 px-5 py-4"
         style={{ background: overlayBg }}
       >
-        <div className="flex items-center justify-between gap-3">
-          {/* Label + tag in one row */}
-          <div className="flex items-center gap-2.5 flex-1 min-w-0">
-            <p
-              className="text-sm font-semibold whitespace-nowrap"
-              style={{ color: labelColor }}
-            >
-              {label}
-            </p>
-            <span
-              className="text-[11px] px-2.5 py-1 rounded-full font-medium whitespace-nowrap"
-              style={tagStyle}
-            >
-              {tag}
-            </span>
-          </div>
+        <motion.div
+          className="flex items-center justify-end gap-3"
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: hovered ? 1 : 0, y: hovered ? 0 : 6 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        >
           {/* Arrow */}
           <motion.div
             className="w-8 h-8 rounded-full flex items-center justify-center shrink-0"
-            style={{
-              background: hovered ? GRADIENT_BTN.background : 'rgba(88,89,173,0.12)',
-            }}
-            animate={{ opacity: hovered ? 1 : 0, scale: hovered ? 1 : 0.7 }}
+            style={{ background: GRADIENT_BTN.background }}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.97 }}
             transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
           >
             <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-              <path d="M1 6h10M6 1l5 5-5 5" stroke={hovered ? '#fff' : '#5859AD'} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              <path d="M1 6h10M6 1l5 5-5 5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </motion.div>
-        </div>
+        </motion.div>
       </div>
+
+      {/* Cursor-follow tooltip */}
+      <motion.div
+        className="absolute pointer-events-none whitespace-nowrap text-xs font-semibold px-3.5 py-2 rounded-2xl z-20"
+        style={{
+          left: tipXSpring,
+          top: tipYSpring,
+          x: '-50%',
+          y: '-130%',
+          scale: tipScale,
+          background: '#ffffff',
+          color: '#5859AD',
+          boxShadow: '0 10px 28px rgba(27,34,51,0.18)',
+          transformOrigin: 'bottom center',
+        }}
+      >
+        {tag}
+      </motion.div>
     </motion.div>
   )
 }
@@ -257,38 +303,12 @@ function OperationsTab({ onOpenProject }) {
         description="主导全站核心运营活动的主视觉设计。深度打通 AIGC 工作流，将创意概念至 AI 3D/黏土风视觉的落地周期缩短 40%，实现全链路高质感物料覆盖。"
       />
 
-      {/* Process flow banner — steps only */}
-      <div
-        className="mb-8 px-5 py-4 rounded-2xl flex items-center gap-4"
-        style={{
-          background: '#ffffff',
-          border: '1px solid rgba(200,196,210,0.5)',
-        }}
-      >
-        <CyberLines count={3} />
-        {['创意概念', 'AI 提示词微调/场景合成', '视觉终稿', '多端物料延展'].map((step, i, arr) => (
-          <span key={step} className="flex items-center gap-2">
-            <span
-              className="text-[11px] px-2.5 py-0.5 rounded-full font-medium"
-              style={{ background: 'rgba(88,89,173,0.10)', color: '#5859AD', border: '1px solid rgba(88,89,173,0.2)' }}
-            >
-              {step}
-            </span>
-            {i < arr.length - 1 && (
-              <svg width="10" height="10" viewBox="0 0 10 10" fill="none">
-                <path d="M1 5h8M5 1l4 4-4 4" stroke="rgba(88,89,173,0.5)" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-            )}
-          </span>
-        ))}
-      </div>
-
       {/* Cards grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         <motion.div className="md:col-span-2" {...fadeUp(0 * 0.08)}>
           <WorkCard
             label="GAME STAR 盒级玩家召集令"
-            tag="校园招聘主视觉"
+            tag="校园招聘主视觉设计"
             wide tall
             image={imgGamestar}
             objectPosition="center 40%"
@@ -299,10 +319,10 @@ function OperationsTab({ onOpenProject }) {
           />
         </motion.div>
         <motion.div {...fadeUp(1 * 0.08)}>
-          <WorkCard label="3D 毛毡风新春大促" tag="节日活动" image={imgChunjie} objectPosition="center top" overlayColor="rgba(80,10,10,0.92)" onClick={() => onOpenProject('tab01-card2')} />
+          <WorkCard label="3D 毛毡风新春大促" tag="新年商城促销活动" image={imgChunjie} objectPosition="center top" overlayColor="rgba(80,10,10,0.92)" onClick={() => onOpenProject('tab01-card2')} />
         </motion.div>
         <motion.div {...fadeUp(2 * 0.08)}>
-          <WorkCard label="万圣节赛博惊奇夜" tag="节日活动" image={imgHalloween} objectPosition="center center" overlayColor="rgba(8,8,40,0.95)" onClick={() => onOpenProject('tab01-card3')} />
+          <WorkCard label="万圣节赛博惊奇夜" tag="节日创作类活动" image={imgHalloween} objectPosition="center center" overlayColor="rgba(8,8,40,0.95)" onClick={() => onOpenProject('tab01-card3')} />
         </motion.div>
         <motion.div className="md:col-span-2" {...fadeUp(3 * 0.08)}>
           <WorkCard label="AIGC 工作流复盘" tag="设计流程" wide image={imgProcess} objectPosition="center center" lightOverlay={true} overlayColor="rgba(40,35,80,0.95)" onClick={() => onOpenProject('tab01-card4')} />
@@ -343,21 +363,13 @@ function GamingTab({ onOpenProject }) {
 
       {/* ── 区块一：UGC 互动激活活动 ── */}
       <div className="mb-14">
-        <SubSectionLabel>
-          UGC 互动激活活动
-          <span
-            className="ml-3 text-[11px] font-light tracking-widest"
-            style={{ color: 'rgba(88,89,173,0.4)' }}
-          >
-            HeyBox Community &amp; UGC Activation
-          </span>
-        </SubSectionLabel>
+        <SubSectionLabel>UGC 互动激活活动</SubSectionLabel>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
           <motion.div {...fadeUp(0 * 0.08)}>
-            <WorkCard label="A 级核心运营专题" tag="社区运营" image={imgCoreOps} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card1')} />
+            <WorkCard label="A 级核心运营专题" tag="A 级核心运营专题" image={imgCoreOps} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card1')} />
           </motion.div>
           <motion.div {...fadeUp(1 * 0.08)}>
-            <WorkCard label="日常营销视觉" tag="社区运营" image={imgDaily} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card2')} />
+            <WorkCard label="日常营销视觉" tag="日常营销视觉" image={imgDaily} objectPosition="center center" overlayColor="rgba(35,35,35,0.90)" onClick={() => onOpenProject('tab02-card2')} />
           </motion.div>
         </div>
       </div>
@@ -367,13 +379,13 @@ function GamingTab({ onOpenProject }) {
         <SubSectionLabel>顶流游戏合作活动</SubSectionLabel>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
           <motion.div {...fadeUp(0 * 0.08)}>
-            <WorkCard label="二次元游戏合作" tag="画风" image={imgAnime} objectPosition="center top" overlayColor="rgba(15,40,60,0.88)" onClick={() => onOpenProject('tab02-card3')} />
+            <WorkCard label="二次元游戏合作" tag="二次元游戏合作" image={imgAnime} objectPosition="center top" overlayColor="rgba(15,40,60,0.88)" onClick={() => onOpenProject('tab02-card3')} />
           </motion.div>
           <motion.div {...fadeUp(1 * 0.08)}>
-            <WorkCard label="3A 单机大作发行项目" tag="重工业" image={img3A} objectPosition="center 30%" overlayColor="rgba(20,15,10,0.88)" onClick={() => onOpenProject('tab02-card4')} />
+            <WorkCard label="3A 单机大作发行项目" tag="3A 单机大作发行项目" image={img3A} objectPosition="center 30%" overlayColor="rgba(20,15,10,0.88)" onClick={() => onOpenProject('tab02-card4')} />
           </motion.div>
           <motion.div {...fadeUp(2 * 0.08)}>
-            <WorkCard label="硬核战术 FPS 游戏" tag="硬核对抗" image={imgFPS} objectPosition="center center" overlayColor="rgba(80,40,5,0.88)" onClick={() => onOpenProject('tab02-card5')} />
+            <WorkCard label="硬核战术 FPS 游戏" tag="硬核战术 FPS 游戏" image={imgFPS} objectPosition="center center" overlayColor="rgba(80,40,5,0.88)" onClick={() => onOpenProject('tab02-card5')} />
           </motion.div>
         </div>
       </div>
@@ -383,13 +395,6 @@ function GamingTab({ onOpenProject }) {
 
 /* ─── Tab 3: UI/UX ───────────────────────────────────────────────────────── */
 function UiUxTab({ onOpenProject }) {
-  const steps = [
-    { num: '01', label: '建库',   desc: '题库自建 · 可视化管理' },
-    { num: '02', label: '创作',   desc: '轻量化画板 · 弹窗引导' },
-    { num: '03', label: '猜题',   desc: '趣味互动 · 实时反馈' },
-    { num: '04', label: '裂变',   desc: 'VIRAL GROWTH' },
-  ]
-
   return (
     <div>
       <SectionHeader
@@ -431,85 +436,6 @@ function UiUxTab({ onOpenProject }) {
             </span>
           </div>
         ))}
-      </div>
-
-      {/* Design loop flow */}
-      <div
-        className="mb-10 p-6 rounded-2xl"
-        style={{
-          background: '#ffffff',
-          border: '1px solid rgba(200,196,210,0.5)',
-          boxShadow: '0 8px 28px rgba(27,34,51,0.04)',
-        }}
-      >
-        <div className="flex items-center gap-3 mb-6">
-          <CyberLines count={3} />
-          <p className="text-[11px] tracking-[0.28em] uppercase font-medium" style={{ color: 'rgba(27,34,51,0.35)' }}>
-            设计闭环 · Design Loop
-          </p>
-        </div>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr auto 1fr auto 1fr auto 1fr',
-            gap: 0,
-            alignItems: 'start',
-          }}
-        >
-          {steps.map((step, i) => (
-            <React.Fragment key={step.num}>
-              {/* Step item */}
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  textAlign: 'center',
-                  padding: '0 16px',
-                }}
-              >
-                <div
-                  className="w-14 h-14 rounded-xl flex items-center justify-center font-bold"
-                  style={{
-                    background: 'rgba(88,89,173,0.10)',
-                    border: '1px solid rgba(88,89,173,0.25)',
-                    color: '#5859AD',
-                    fontSize: '1rem',
-                  }}
-                >
-                  {step.num}
-                </div>
-                <span
-                  className="text-sm font-semibold"
-                  style={{ color: '#5859AD', marginTop: '12px' }}
-                >
-                  {step.label}
-                </span>
-                <span
-                  className="text-xs"
-                  style={{ color: 'rgba(88,89,173,0.50)', lineHeight: 1.6, marginTop: '6px' }}
-                >
-                  {step.desc}
-                </span>
-              </div>
-
-              {/* Arrow between steps */}
-              {i < steps.length - 1 && (
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'flex-start',
-                    paddingTop: '20px',
-                  }}
-                >
-                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                    <path d="M3 10h14M11 4l6 6-6 6" stroke="rgba(88,89,173,0.35)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                  </svg>
-                </div>
-              )}
-            </React.Fragment>
-          ))}
-        </div>
       </div>
 
       {/* Main grid: iPhone mockup + cards */}
@@ -693,13 +619,13 @@ function DataTab() {
       <style>{`@media (min-width: 768px) { .merch-grid { grid-template-columns: 1.4fr 1fr 1fr; } }`}</style>
       <div className="merch-grid grid grid-cols-1 gap-8" style={{ pointerEvents: 'none', cursor: 'default' }}>
         <motion.div {...fadeUp(0 * 0.08)}>
-          <WorkCard label="小黑盒棉花娃娃" tag="毛绒软周边" image={imgDoll} objectPosition="center top" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+          <WorkCard label="小黑盒棉花娃娃" tag="毛绒软周边" image={imgDoll} objectPosition="center top" lightOverlay={true} customOverlayBg="transparent" cardMinHeight="300px" />
         </motion.div>
         <motion.div {...fadeUp(1 * 0.08)}>
-          <WorkCard label="主题键帽设计" tag="硬核重工键帽" image={imgKeycap} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+          <WorkCard label="主题键帽设计" tag="硬核重工键帽" image={imgKeycap} objectPosition="center center" lightOverlay={true} customOverlayBg="transparent" cardMinHeight="300px" />
         </motion.div>
         <motion.div {...fadeUp(2 * 0.08)}>
-          <WorkCard label="亚克力周边系列" tag="品牌周边衍生" image={imgAcrylic} objectPosition="center center" lightOverlay={true} customOverlayBg="linear-gradient(to top, rgba(225,222,243,0.97) 0%, rgba(225,222,243,0.75) 55%, rgba(225,222,243,0.10) 80%, transparent 100%)" cardMinHeight="300px" />
+          <WorkCard label="亚克力周边系列" tag="品牌周边衍生" image={imgAcrylic} objectPosition="center center" lightOverlay={true} customOverlayBg="transparent" cardMinHeight="300px" />
         </motion.div>
       </div>
 
@@ -722,7 +648,7 @@ export default function TabContent({ activeTab }) {
 
   return (
     <>
-      <section className="min-h-[80vh] px-6 md:px-16 lg:px-24 py-24 max-w-6xl mx-auto">
+      <section className="min-h-[80vh] px-6 md:px-16 lg:px-24 pb-24 max-w-6xl mx-auto" style={{ paddingTop: 70 }}>
         <div key={activeTab} className="tab-enter">
           {map[activeTab]}
         </div>
