@@ -120,7 +120,7 @@ export default function HeroSection() {
 
             {/* Headline */}
             <div className="space-y-0 leading-none">
-              <h1 className="font-bold leading-[1.28]" style={{ letterSpacing: '0.005em' }}>
+              <h1 className="font-bold leading-[1.28]" style={{ letterSpacing: '0.005em', fontFamily: "'Playfair Display', serif" }}>
                 <GradientText
                   className="block"
                   style={{ fontSize: 'clamp(3rem, 7vw, 5rem)' }}
